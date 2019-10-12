@@ -53,9 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\node.cs" />
-     <Compile Include="Assets\Scripts\pacman.cs" />
-     <Compile Include="Assets\Scripts\tile.cs" />
+     <Compile Include="Assets\Scripts\LevelOneBoard.cs" />
+     <Compile Include="Assets\Scripts\Node.cs" />
+     <Compile Include="Assets\Scripts\Pacman.cs" />
+     <Compile Include="Assets\Scripts\Tile.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>D:/UTS/IGD/ass3/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
