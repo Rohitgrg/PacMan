@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/1stLevel.unity
+- path: C:/Users/Rohit gurung/Downloads/PacMan Clone/Assets/Scenes/Level1.unity
   isLoaded: 1
   isActive: 1
