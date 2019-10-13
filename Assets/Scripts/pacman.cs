@@ -36,6 +36,7 @@ public class Pacman : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Score: " + GameObject.Find("Game").GetComponent<LevelOneBoard>().score);
         //checking for the pressed key value
         checkForInput();
 
@@ -263,6 +264,7 @@ public class Pacman : MonoBehaviour
                 {
                     obj.GetComponent<SpriteRenderer>().enabled = false;
                     tile.isConsumed = true;
+                    GameObject.Find("Game").GetComponent<LevelOneBoard>().score += 1;
                 }
             }
         }
