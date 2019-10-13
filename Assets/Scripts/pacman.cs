@@ -8,17 +8,19 @@ public class Pacman : MonoBehaviour
     //The movement speed of Pacman
     public float speed = 4.0f;
 
+    public Sprite idle;
+
     //store the direction Pacman wants to go
     private Vector2 moveDirection = Vector2.zero;
     private Vector2 desiredDirection;
     // Start is called before the first frame update
     void Start()
     {
-        Node node = GetNodeAtPostion(transform.position);
+        Node node2 = GetNodeAtPostion(transform.position);
 
-        if (node != null)
+        if (node2 != null)
         {
-            currentNode = node;
+            currentNode = node2;
             Debug.Log(transform.localPosition);
             Debug.Log(currentNode);
         }
@@ -40,13 +42,30 @@ public class Pacman : MonoBehaviour
         //change the position according to the pressed key
         if (desiredNode != currentNode && desiredNode != null)
         {
+            if (desiredDirection == moveDirection * -1)
+            {
+                moveDirection *= -1;
 
+                Node temp = desiredNode;
+                desiredNode = oldNode;
+                oldNode = temp;
+            }
             if (possibleTarget())
             {
 
                 currentNode = desiredNode;
 
                 transform.localPosition = currentNode.transform.position;
+
+                GameObject nextPortal = getPortal(currentNode.transform.position);
+
+                Debug.Log("bp: " + nextPortal);
+
+                if (nextPortal != null)
+                {
+                    transform.localPosition = nextPortal.transform.position;
+                    currentNode = nextPortal.GetComponent<Node>();
+                }
 
                 Node nextNode = validMove(desiredDirection);
 
@@ -70,6 +89,8 @@ public class Pacman : MonoBehaviour
                 transform.localPosition += (Vector3)(moveDirection * speed) * 2 * Time.deltaTime;
             }
         }
+
+        eatPallet();
 
         //Change the direction that Pacman is facing
         if (moveDirection == Vector2.up)
@@ -97,6 +118,18 @@ public class Pacman : MonoBehaviour
 
         }
 
+        changeAnimationState();
+
+    }
+
+    void changeAnimationState()
+    {
+        if (moveDirection == Vector2.zero)
+        {
+            GetComponent<Animator>().enabled = false;
+            GetComponent<SpriteRenderer>().sprite = idle;
+        }
+        else GetComponent<Animator>().enabled = true;
     }
 
     void checkForInput()
@@ -195,5 +228,55 @@ public class Pacman : MonoBehaviour
         float nodeToCurrent = spaceBetweenNodes(transform.localPosition);
 
         return nodeToCurrent > nodeToTarget;
+    }
+
+    GameObject getPortal(Vector2 v)
+    {
+        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[(int)v.x, (int)v.y];
+
+        if (tile != null)
+        {
+            if (tile.GetComponent<Tile>() != null)
+            {
+
+                if (tile.GetComponent<Tile>().isPortal)
+                {
+                    GameObject nextPortal = tile.GetComponent<Tile>().firstPortal;
+                    Debug.Log("P:" + nextPortal);
+                    return nextPortal;
+                }
+            }
+        }
+        return null;
+    }
+
+    void eatPallet()
+    {
+        GameObject obj = getTile(transform.position);
+        if (obj != null)
+        {
+            Tile tile = obj.GetComponent<Tile>();
+
+            if (tile != null)
+            {
+                if (!tile.isConsumed && (tile.isBigPallet || tile.isPallet))
+                {
+                    obj.GetComponent<SpriteRenderer>().enabled = false;
+                    tile.isConsumed = true;
+                }
+            }
+        }
+    }
+    GameObject getTile(Vector2 v)
+    {
+        int posX = Mathf.RoundToInt(v.x);
+        int posY = Mathf.RoundToInt(v.y);
+
+        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[posX, posY];
+
+        if (tile != null) return tile;
+
+        return null;
+
     }
 }

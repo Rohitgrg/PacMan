@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class tile : MonoBehaviour
+public class Tile : MonoBehaviour
 {
+    public bool isPortal;
+
+    public GameObject firstPortal;
+
+
+    public bool isPallet, isBigPallet, isConsumed;
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
