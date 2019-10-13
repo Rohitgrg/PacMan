@@ -8,6 +8,8 @@ public class Pacman : MonoBehaviour
     //The movement speed of Pacman
     public float speed = 4.0f;
 
+    public Sprite idle;
+
     //store the direction Pacman wants to go
     private Vector2 moveDirection = Vector2.zero;
     private Vector2 desiredDirection;
@@ -97,6 +99,15 @@ public class Pacman : MonoBehaviour
 
         }
 
+        changeAnimationState();
+
+    }
+
+    void changeAnimationState(){
+        if (moveDirection == Vector2.zero){
+            GetComponent<Animator> ().enabled = false;
+            GetComponent<SpriteRenderer>().sprite = idle;
+        } else GetComponent<Animator> ().enabled = true;
     }
 
     void checkForInput()
