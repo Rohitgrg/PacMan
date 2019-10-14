@@ -36,7 +36,7 @@ public class Pacman : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Score: " + GameObject.Find("Game").GetComponent<LevelOneBoard>().score);
+        // Debug.Log("Score: " + GameObject.Find("Game").GetComponent<LevelOneBoard>().score);
         //checking for the pressed key value
         checkForInput();
 
@@ -67,6 +67,7 @@ public class Pacman : MonoBehaviour
                     transform.localPosition = nextPortal.transform.position;
                     currentNode = nextPortal.GetComponent<Node>();
                 }
+
 
                 Node nextNode = validMove(desiredDirection);
 
@@ -233,7 +234,7 @@ public class Pacman : MonoBehaviour
 
     GameObject getPortal(Vector2 v)
     {
-        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[(int)v.x, (int)v.y];
+        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[(int) Mathf.Round(v.x), (int) Mathf.Round(v.y)];
 
         if (tile != null)
         {
