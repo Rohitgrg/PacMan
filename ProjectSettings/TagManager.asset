@@ -7,6 +7,9 @@ TagManager:
   - PacMan
   - Pinky
   - Ghosts
+  - Home
+  - Inky
+  - Jail
   layers:
   - Default
   - TransparentFX

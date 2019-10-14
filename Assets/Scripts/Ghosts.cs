@@ -8,9 +8,13 @@ public class Ghosts : MonoBehaviour
     public float speed = 3.7f;
 
     public Node startingPosition;
+    public Node homePosition;
 
     public float ghostsReleaseTime = 0;
     public float pinkyReleaseTime = 5;
+    public float inkyReleaseTime = 14;
+    public float clydeReleaseTime = 21;
+
     public bool inJail = false;
 
     public enum GhostType
@@ -47,10 +51,14 @@ public class Ghosts : MonoBehaviour
 
     private GameObject pinkGhost;
 
+    private GameObject blueGhost;
+
     void Start()
     {
         pacman = GameObject.FindGameObjectWithTag("PacMan");
         pinkGhost = GameObject.FindGameObjectWithTag("Pinky");
+        blueGhost = GameObject.FindGameObjectWithTag("Inky");
+
         Node node2 = GetNodeAtPostion(transform.localPosition);
 
         if (node2 != null)
@@ -96,6 +104,28 @@ public class Ghosts : MonoBehaviour
                 nextTile = new Vector2(Mathf.RoundToInt(pacmanPos.x), Mathf.RoundToInt(pacmanPos.y));
                 return nextTile;
             case GhostType.Blue:
+                Vector2 blueGhostPos = blueGhost.transform.position;
+                Vector2 pacmanTilePos = pacman.transform.position;
+                Vector2 homeTilePos = homePosition.transform.position;
+
+                float distanceInkyToPac = GetDistance(blueGhostPos, pacmanTilePos);
+                float distancePacToHome = GetDistance(homeTilePos, pacmanTilePos);
+                float distanceInkyToHome = GetDistance(homeTilePos, blueGhostPos);
+
+                Vector2 pacmanOrientation = pacman.GetComponent<Pacman>().orientation;
+
+
+                if (distanceInkyToPac < 5)
+                {
+                    nextTile = pacmanTilePos * -1;
+                }
+                else
+                {
+                    nextTile = pacmanTilePos + (10 * pacmanOrientation);
+                }
+
+                return nextTile;
+
             case GhostType.Pink:
                 Vector2 pinkGhostPos = pinkGhost.transform.position;
                 Vector2 pinkGhostOrientation = pinkGhost.GetComponent<Ghosts>().orientation;
@@ -105,6 +135,12 @@ public class Ghosts : MonoBehaviour
                 updateOrientation();
                 return nextTile;
             case GhostType.Orange:
+                Vector2 pacmanPosition = pinkGhost.transform.position;
+                Vector2 blueGhostOrientation = pinkGhost.GetComponent<Ghosts>().orientation;
+                Vector2 clydeTile = new Vector2(Mathf.RoundToInt(pacmanPosition.x), Mathf.RoundToInt(pacmanPosition.y));
+                int rand = Random.Range(1, 25);
+                nextTile = clydeTile + (rand * blueGhostOrientation);
+                return nextTile;
             default:
                 return nextTile;
         }
@@ -118,11 +154,30 @@ public class Ghosts : MonoBehaviour
 
         }
     }
+    void releaseBlueGhost()
+    {
+        if (inJail && ghostType == GhostType.Blue)
+        {
+            inJail = false;
+
+        }
+    }
+    void releaseOrangeGhost()
+    {
+        if (inJail && ghostType == GhostType.Orange)
+        {
+            inJail = false;
+
+        }
+    }
 
     void releaseGhosts()
     {
         ghostsReleaseTime += Time.deltaTime;
         if (ghostsReleaseTime > pinkyReleaseTime) { releasePinkGhost(); }
+        if (ghostsReleaseTime > inkyReleaseTime) { releaseBlueGhost(); }
+        if (ghostsReleaseTime > clydeReleaseTime) { releaseOrangeGhost(); }
+
     }
 
     void move()
@@ -223,8 +278,20 @@ public class Ghosts : MonoBehaviour
     Node GetNextNode()
     {
         Vector2 nextTile = Vector2.zero;
+        // (currentMode == Mode.Chase)
 
-        nextTile = GetNextTile();
+        switch (currentMode)
+        {
+            case Mode.Chase:
+                nextTile = GetNextTile();
+                break;
+            case Mode.Scatter:
+                nextTile = homePosition.transform.position;
+                break;
+            default:
+                break;
+        }
+
 
         Node nextNode = null;
         Node[] availableNodes = new Node[4];
@@ -342,6 +409,31 @@ public class Ghosts : MonoBehaviour
         else if (moveDirection == Vector2.right)
         {
             orientation = Vector2.right;
+
+
+        }
+    }
+
+
+    void updateInkyOrientation(Vector2 direction)
+    {
+        //Change the direction that Pacman is facing
+        if (direction == Vector2.up)
+        {
+            orientation = Vector2.down;
+        }
+        else if (direction == Vector2.down)
+        {
+            orientation = Vector2.up;
+        }
+        else if (direction == Vector2.left)
+        {
+            orientation = Vector2.right;
+        }
+
+        else if (direction == Vector2.right)
+        {
+            orientation = Vector2.left;
 
 
         }

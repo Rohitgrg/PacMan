@@ -26,7 +26,7 @@ public class LevelOneBoard : MonoBehaviour
         {
             Vector2 position = item.transform.position;
             Tile tile = item.GetComponent<Tile>();
-            if (item.name != "pacman" && item.name != "IntersectionNodes" && item.name != "nonIntersectionNodes" && item.name != "borders" && item.name != "palets" && item.tag != "Ghosts" && item.tag != "Pinky")
+            if (item.name != "pacman" && item.name != "IntersectionNodes" && item.name != "nonIntersectionNodes" && item.name != "borders" && item.name != "palets" && item.tag != "Ghosts" && item.tag != "Pinky" && item.tag != "Inky" && item.tag != "Home")
             {
                 if (tile != null)
                 {
