@@ -26,13 +26,15 @@ public class LevelOneBoard : MonoBehaviour
         {
             Vector2 position = item.transform.position;
             Tile tile = item.GetComponent<Tile>();
-            if (item.name != "pacman" && item.name != "IntersectionNodes" && item.name != "nonIntersectionNodes" && item.name != "borders" && item.name != "palets")
+            if (item.name != "pacman" && item.name != "IntersectionNodes" && item.name != "nonIntersectionNodes" && item.name != "borders" && item.name != "palets" && item.tag != "Ghosts" && item.tag != "Pinky")
             {
-                if (tile != null){
-                    if (tile.isBigPallet || tile.isBigPallet){
+                if (tile != null)
+                {
+                    if (tile.isBigPallet || tile.isBigPallet)
+                    {
                         noOfPalets++;
                     }
-                board[(int)Mathf.Round(position.x), (int)Mathf.Round(position.y)] = item;
+                    board[(int)Mathf.Round(position.x), (int)Mathf.Round(position.y)] = item;
                 }
             }
         }

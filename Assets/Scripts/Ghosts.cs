@@ -4,9 +4,24 @@ using UnityEngine;
 
 public class Ghosts : MonoBehaviour
 {
+    public Vector2 orientation;
     public float speed = 3.7f;
 
     public Node startingPosition;
+
+    public float ghostsReleaseTime = 0;
+    public float pinkyReleaseTime = 5;
+    public bool inJail = false;
+
+    public enum GhostType
+    {
+        Blue,
+        Pink,
+        Orange,
+        Red
+    }
+
+    public GhostType ghostType = GhostType.Red;
 
     public int[] scatterModeTimer = { 7, 7, 5, 5 };
     public int[] chaseModeTimer = { 20, 20, 20 };
@@ -30,11 +45,12 @@ public class Ghosts : MonoBehaviour
 
     private GameObject pacman;
 
+    private GameObject pinkGhost;
 
     void Start()
     {
         pacman = GameObject.FindGameObjectWithTag("PacMan");
-
+        pinkGhost = GameObject.FindGameObjectWithTag("Pinky");
         Node node2 = GetNodeAtPostion(transform.localPosition);
 
         if (node2 != null)
@@ -43,16 +59,21 @@ public class Ghosts : MonoBehaviour
 
         }
 
-        moveDirection = Vector2.right;
-
+        orientation = Vector2.right;
 
         oldNode = currentNode;
 
 
-        Vector2 pacmanPos = pacman.transform.position;
-        Vector2 nextTile = new Vector2(Mathf.RoundToInt(pacmanPos.x), Mathf.RoundToInt(pacmanPos.y));
-
-        desiredNode = GetNodeAtPostion(nextTile);
+        if (inJail)
+        {
+            moveDirection = Vector2.up;
+            desiredNode = currentNode.neighbours[0];
+        }
+        else
+        {
+            moveDirection = Vector2.left;
+            desiredNode = GetNextNode();
+        }
 
 
     }
@@ -62,11 +83,51 @@ public class Ghosts : MonoBehaviour
     {
         updateMode();
         move();
+        releaseGhosts();
+    }
+
+    Vector2 GetNextTile()
+    {
+        Vector2 nextTile = Vector2.zero;
+        switch (ghostType)
+        {
+            case GhostType.Red:
+                Vector2 pacmanPos = pacman.transform.position;
+                nextTile = new Vector2(Mathf.RoundToInt(pacmanPos.x), Mathf.RoundToInt(pacmanPos.y));
+                return nextTile;
+            case GhostType.Blue:
+            case GhostType.Pink:
+                Vector2 pinkGhostPos = pinkGhost.transform.position;
+                Vector2 pinkGhostOrientation = pinkGhost.GetComponent<Ghosts>().orientation;
+                // pinkGhostOrientation = pinkGhostOrientation.right;
+                Vector2 pinkyTile = new Vector2(Mathf.RoundToInt(pinkGhostPos.x), Mathf.RoundToInt(pinkGhostPos.y));
+                nextTile = pinkyTile + (10 * pinkGhostOrientation);
+                updateOrientation();
+                return nextTile;
+            case GhostType.Orange:
+            default:
+                return nextTile;
+        }
+    }
+
+    void releasePinkGhost()
+    {
+        if (inJail && ghostType == GhostType.Pink)
+        {
+            inJail = false;
+
+        }
+    }
+
+    void releaseGhosts()
+    {
+        ghostsReleaseTime += Time.deltaTime;
+        if (ghostsReleaseTime > pinkyReleaseTime) { releasePinkGhost(); }
     }
 
     void move()
     {
-        if (desiredNode != currentNode && desiredNode != null)
+        if (desiredNode != currentNode && desiredNode != null && !inJail)
         {
             if (possibleTarget())
             {
@@ -162,8 +223,8 @@ public class Ghosts : MonoBehaviour
     Node GetNextNode()
     {
         Vector2 nextTile = Vector2.zero;
-        Vector2 pacmanPos = pacman.transform.position;
-        nextTile = new Vector2(Mathf.RoundToInt(pacmanPos.x), Mathf.RoundToInt(pacmanPos.y));
+
+        nextTile = GetNextTile();
 
         Node nextNode = null;
         Node[] availableNodes = new Node[4];
@@ -261,5 +322,29 @@ public class Ghosts : MonoBehaviour
         return (Mathf.Sqrt(Mathf.Pow((first_position.x - second_position.x), 2) + Mathf.Pow((first_position.y - second_position.y), 2)));
     }
 
+
+    void updateOrientation()
+    {
+        //Change the direction that Pacman is facing
+        if (moveDirection == Vector2.up)
+        {
+            orientation = Vector2.up;
+        }
+        else if (moveDirection == Vector2.down)
+        {
+            orientation = Vector2.down;
+        }
+        else if (moveDirection == Vector2.left)
+        {
+            orientation = Vector2.right;
+        }
+
+        else if (moveDirection == Vector2.right)
+        {
+            orientation = Vector2.right;
+
+
+        }
+    }
 
 }
