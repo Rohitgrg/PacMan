@@ -10,6 +10,7 @@ TagManager:
   - Home
   - Inky
   - Jail
+  - clyde
   layers:
   - Default
   - TransparentFX
