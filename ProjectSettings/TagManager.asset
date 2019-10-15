@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PacMan
+  - Pinky
+  - Ghosts
+  - Home
+  - Inky
+  - Jail
+  - clyde
   layers:
   - Default
   - TransparentFX

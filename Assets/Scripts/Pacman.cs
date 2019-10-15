@@ -10,6 +10,8 @@ public class Pacman : MonoBehaviour
 
     public Sprite idle;
 
+    public Vector2 orientation;
+
     //store the direction Pacman wants to go
     private Vector2 moveDirection = Vector2.zero;
     private Vector2 desiredDirection;
@@ -36,7 +38,7 @@ public class Pacman : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Score: " + GameObject.Find("Game").GetComponent<LevelOneBoard>().score);
+        // Debug.Log("Score: " + GameObject.Find("Game").GetComponent<LevelOneBoard>().score);
         //checking for the pressed key value
         checkForInput();
 
@@ -68,6 +70,7 @@ public class Pacman : MonoBehaviour
                     currentNode = nextPortal.GetComponent<Node>();
                 }
 
+
                 Node nextNode = validMove(desiredDirection);
 
                 if (nextNode != null) moveDirection = desiredDirection;
@@ -96,16 +99,19 @@ public class Pacman : MonoBehaviour
         //Change the direction that Pacman is facing
         if (moveDirection == Vector2.up)
         {
+            orientation = Vector2.up;
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.Euler(0, 0, 90);
         }
         else if (moveDirection == Vector2.down)
         {
+            orientation = Vector2.down;
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.Euler(0, 0, 270);
         }
         else if (moveDirection == Vector2.left)
         {
+            orientation = Vector2.left;
             transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             transform.localScale = new Vector3(-1, 1, 1);
@@ -113,6 +119,7 @@ public class Pacman : MonoBehaviour
 
         else if (moveDirection == Vector2.right)
         {
+            orientation = Vector2.right;
             transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             transform.localScale = new Vector3(1, 1, 1);
@@ -233,7 +240,7 @@ public class Pacman : MonoBehaviour
 
     GameObject getPortal(Vector2 v)
     {
-        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[(int)v.x, (int)v.y];
+        GameObject tile = GameObject.Find("Game").GetComponent<LevelOneBoard>().board[(int)Mathf.Round(v.x), (int)Mathf.Round(v.y)];
 
         if (tile != null)
         {
@@ -265,6 +272,7 @@ public class Pacman : MonoBehaviour
                     obj.GetComponent<SpriteRenderer>().enabled = false;
                     tile.isConsumed = true;
                     GameObject.Find("Game").GetComponent<LevelOneBoard>().score += 1;
+
                 }
             }
         }
