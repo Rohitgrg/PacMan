@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Ghosts : MonoBehaviour
 {
+
+    public RuntimeAnimatorController ghostUp;
+    public RuntimeAnimatorController ghostDown;
+    public RuntimeAnimatorController ghostLeft;
+    public RuntimeAnimatorController ghostRight;
+
+
+
+
     public Vector2 orientation;
     public float speed = 3.7f;
 
@@ -26,6 +35,8 @@ public class Ghosts : MonoBehaviour
     }
 
     public GhostType ghostType = GhostType.Red;
+
+
 
     public int[] scatterModeTimer = { 7, 7, 5, 5 };
     public int[] chaseModeTimer = { 20, 20, 20 };
@@ -82,7 +93,7 @@ public class Ghosts : MonoBehaviour
             moveDirection = Vector2.left;
             desiredNode = GetNextNode();
         }
-
+        updateAnimatorController();
 
     }
 
@@ -92,6 +103,32 @@ public class Ghosts : MonoBehaviour
         updateMode();
         move();
         releaseGhosts();
+    }
+
+    void updateAnimatorController()
+    {
+
+        if (moveDirection == Vector2.down)
+        {
+            transform.GetComponent<Animator>().runtimeAnimatorController = ghostDown;
+        }
+        else if (moveDirection == Vector2.up)
+        {
+            transform.GetComponent<Animator>().runtimeAnimatorController = ghostUp;
+        }
+        else if (moveDirection == Vector2.left)
+        {
+            transform.GetComponent<Animator>().runtimeAnimatorController = ghostLeft;
+        }
+        else if (moveDirection == Vector2.right)
+        {
+            transform.GetComponent<Animator>().runtimeAnimatorController = ghostRight;
+        }
+        else
+        {
+            transform.GetComponent<Animator>().runtimeAnimatorController = ghostRight;
+        }
+
     }
 
     Vector2 GetNextTile()
@@ -115,7 +152,7 @@ public class Ghosts : MonoBehaviour
                 Vector2 pacmanOrientation = pacman.GetComponent<Pacman>().orientation;
 
 
-                if (distanceInkyToPac < 5)
+                if (distanceInkyToPac < 8)
                 {
                     nextTile = pacmanTilePos * -1;
                 }
@@ -201,6 +238,8 @@ public class Ghosts : MonoBehaviour
                 desiredNode = GetNextNode();
                 oldNode = currentNode;
                 currentNode = null;
+
+                updateAnimatorController();
             }
             else
             {
